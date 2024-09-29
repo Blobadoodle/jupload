@@ -1,0 +1,31 @@
+<%- include('../partials/head', { title: file.fileName }) %>
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+	<div class="card">
+		<div class="card-header">jUpload</div>
+		<div class="card-body">
+			<table class="table table-bordered"><tbody>
+					<tr>
+						<td>Filename</td>
+						<td class="text-end"><%= file.fileName %></td>
+					</tr>
+					<tr>
+						<td>Expires At</td>
+						<td class="text-end"><%= new Date(file.expiresAt).toLocaleString() %></td>
+					</tr>
+					<tr>
+						<td>File Size</td>
+						<td class="text-end"><%= file.fileSize %></td>
+					</tr>
+					<tr>
+						<td>Mime Type</td>
+						<td class="text-end"><%= file.mimeType %></td>
+					</tr>
+			</tbody></table>
+			<a class="btn btn-outline-primary" href="/<%= file.id + '/' + file.fileName %>">Download</a>
+		</div>
+	</div>
+
+</div>
+
+<%- include('../partials/footer') %>

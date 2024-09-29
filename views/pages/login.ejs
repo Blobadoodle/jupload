@@ -1,0 +1,19 @@
+<%- include('../partials/head', { title: 'login' }) %>
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+	<div class="card">
+		<div class="card-header">This service is restricted.</div>
+		<div class="card-body">
+			<form action="/api/v1/login" method="post">
+				<div class="form-floating mb-3">
+					<input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+					<input type="hidden" name="username" id="username" value="username">
+					<label for="password">Password</label>
+				</div>
+				<button type="submit" class="btn btn-primary">Login</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+<%- include('../partials/footer') %>

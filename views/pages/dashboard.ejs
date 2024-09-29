@@ -1,0 +1,18 @@
+<%- include('../partials/head', { title: 'dashboard' }) %>
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+	<div class="card">
+		<div class="card-header">jUpload</div>
+		<div class="card-body">
+			<form action="/api/v1/file" method="post" enctype='multipart/form-data'>
+				<div class="mb-3">
+					<input class="form-control" type="file" id="file" name="file">
+				  </div>
+				<input type="submit" value="Upload" class="btn btn-primary">
+			</form>
+		</div>
+	</div>
+
+</div>
+
+<%- include('../partials/footer') %>
