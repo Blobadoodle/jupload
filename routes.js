@@ -119,7 +119,8 @@ router.post('/api/v1/file', upload.single('file'), (req, res) => {
 			return res.status(500);
 		}
 
-		res.redirect(`/${id}`);
+		// res.redirect(`/${id}`);
+		res.status(200).json({id});
 	});
 });
 

@@ -1,18 +1,123 @@
 <%- include('../partials/head', { title: 'dashboard' }) %>
 
+<!-- <style>
+	.disabled-link {
+		color: #6c757d; /* Bootstrap's grey color */
+		pointer-events: none;
+		text-decoration: none;
+	}
+</style> -->
+
 <div class="container d-flex justify-content-center align-items-center vh-100">
 	<div class="card">
 		<div class="card-header">jUpload</div>
 		<div class="card-body">
-			<form action="/api/v1/file" method="post" enctype='multipart/form-data'>
+			<!-- <form action="/api/v1/file" method="post" enctype='multipart/form-data'> -->
 				<div class="mb-3">
 					<input class="form-control" type="file" id="file" name="file">
 				  </div>
-				<input type="submit" value="Upload" class="btn btn-primary">
-			</form>
+				<!-- <input type="submit" value="Upload" class="btn btn-primary"> -->
+				 <button type="button" class="btn btn-primary" id="uploadButton">Upload</button>
+			<!-- </form> -->
 		</div>
 	</div>
-
 </div>
+
+<div class="modal fade" id="modal" data-bs-keyboard="false" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="modalLabel"></h1>
+			</div>
+			<div class="modal-body">
+				<div class="progress" role="progressbar">
+					<div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 75%" id="progressBar">75%</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-outline-primary" id="copyLink">Copy Link</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+	<div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+		<div class="toast-header">
+			<img src="..." class="rounded me-2" alt="...">
+			<strong class="me-auto" id="toastTitle"></strong>
+			<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+		</div>
+		<div class="toast-body" id="toastBody">
+		</div>
+	</div>
+</div>
+
+<script>
+	const progressBar = document.getElementById("progressBar");
+	const copyLink = document.getElementById('copyLink');
+	const modalLabel = document.getElementById("modalLabel");
+	let link = '';
+
+	document.getElementById('uploadButton').addEventListener('click', () => {
+		const modal = new bootstrap.Modal(document.getElementById('modal'));
+
+		const file = document.getElementById('file').files[0];
+
+		if(!file) {
+			// TODO: show popup
+			return;
+		}
+
+		modalLabel.innerText = `Uploading ${file.name}...`;
+		copyLink.disabled = true;
+		document.getElementById('modal').dataset.bsBackdrop = 'static';
+		modal.show();
+		
+		const formData = new FormData();
+		formData.append('file', file);
+		
+		const ajax = new XMLHttpRequest();
+		ajax.responseType = 'json';
+		ajax.upload.addEventListener('progress', (event) => {
+			const percentStr = `${(event.loaded / event.total) * 100}%`;
+
+			progressBar.innerText = percentStr;
+			progressBar.style.width = percentStr;
+		}, false);
+		ajax.addEventListener('load', (event) => {
+			modalLabel.innerText = `Finished uploading ${file.name}.`;
+			copyLink.disabled = false;
+			document.getElementById('modal').dataset.bsBackdrop = 'undefined';
+			link = window.location.origin + window.location.pathname + ajax.response.id;
+		}, false);
+		ajax.addEventListener('error', (event) => {
+			modalLabel.innerText = `Error whilst uploading ${file.name}.`;
+			copyLink.disabled = true;
+		} , false);
+		ajax.addEventListener('abort', (event) => {
+			modalLabel.innerText = `Upload of ${file.name} aborted.`;
+			copyLink.disabled = true;
+		}, false);
+		ajax.open('POST', '/api/v1/file');
+		ajax.send(formData);
+	
+		// modal.hide();
+	});
+
+	document.getElementById('copyLink').addEventListener('click', () => {
+		const toast = bootstrap.Toast.getOrCreateInstance(document.getElementById("liveToast"));
+		navigator.clipboard.writeText(link).then(() => {
+			document.getElementById("toastTitle").innerText = 'Success';
+			document.getElementById("toastBody").innerHTML = `Successfully copied <a href="${link}">${link}</a>`;
+			toast.show();
+		}, (err) => {
+			document.getElementById("toastTitle").innerText = 'Error';
+			document.getElementById("toastBody").innerHTML = `Error copying <a href="${link}">${link}</a>`;
+			toast.show();
+		});
+	});
+</script>
+
 
 <%- include('../partials/footer') %>
