@@ -83,10 +83,10 @@
 		const ajax = new XMLHttpRequest();
 		ajax.responseType = 'json';
 		ajax.upload.addEventListener('progress', (event) => {
-			const percentStr = `${(event.loaded / event.total) * 100}%`;
+			const percent = (event.loaded / event.total) * 100;
 
-			progressBar.innerText = percentStr;
-			progressBar.style.width = percentStr;
+			progressBar.innerText = `${percent}%`;
+			progressBar.style.width = `${Math.floor(percent)}%`;
 		}, false);
 		ajax.addEventListener('load', (event) => {
 			modalLabel.innerText = `Finished uploading ${file.name}.`;
