@@ -28,6 +28,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h1 class="modal-title fs-5" id="modalLabel"></h1>
+				<button disabled type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="modalCloseButton"></button>
 			</div>
 			<div class="modal-body">
 				<div class="progress" role="progressbar">
@@ -56,7 +57,8 @@
 <script>
 	const progressBar = document.getElementById("progressBar");
 	const copyLink = document.getElementById('copyLink');
-	const modalLabel = document.getElementById("modalLabel");
+	const modalLabel = document.getElementById('modalLabel');
+	const closeButton = document.getElementById('modalCloseButton');
 	let link = '';
 
 	document.getElementById('uploadButton').addEventListener('click', () => {
@@ -71,7 +73,8 @@
 
 		modalLabel.innerText = `Uploading ${file.name}...`;
 		copyLink.disabled = true;
-		document.getElementById('modal').dataset.bsBackdrop = 'static';
+		document.getElementById('modal').dataset.bsBackdrop = 'static'
+		closeButton.disabled = true;
 		modal.show();
 		
 		const formData = new FormData();
@@ -88,7 +91,6 @@
 		ajax.addEventListener('load', (event) => {
 			modalLabel.innerText = `Finished uploading ${file.name}.`;
 			copyLink.disabled = false;
-			document.getElementById('modal').dataset.bsBackdrop = 'undefined';
 			link = window.location.origin + window.location.pathname + ajax.response.id;
 		}, false);
 		ajax.addEventListener('error', (event) => {
@@ -110,10 +112,14 @@
 		navigator.clipboard.writeText(link).then(() => {
 			document.getElementById("toastTitle").innerText = 'Success';
 			document.getElementById("toastBody").innerHTML = `Successfully copied <a href="${link}">${link}</a>`;
+			document.getElementById('modal').dataset.bsBackdrop = 'undefined';
+			closeButton.disabled = false;
 			toast.show();
 		}, (err) => {
 			document.getElementById("toastTitle").innerText = 'Error';
 			document.getElementById("toastBody").innerHTML = `Error copying <a href="${link}">${link}</a>`;
+			document.getElementById('modal').dataset.bsBackdrop = 'undefined';
+			closeButton.disabled = false;
 			toast.show();
 		});
 	});
